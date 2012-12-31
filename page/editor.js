@@ -55,8 +55,12 @@ define(function(require, exports) {
       log("onleave", pre.childNodes);
       if (pre.childNodes.length === 0) {
         parent = pre.parentNode;
-        parent.removeChild(pre);
-        return typeof parent.onleave === "function" ? parent.onleave() : void 0;
+        try {
+          parent.removeChild(pre);
+          return typeof parent.onleave === "function" ? parent.onleave() : void 0;
+        } catch (error) {
+          return log("already removed:", error);
+        }
       }
     };
   };

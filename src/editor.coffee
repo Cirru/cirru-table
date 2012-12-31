@@ -44,8 +44,11 @@ define (require, exports) ->
       log "onleave", pre.childNodes
       if pre.childNodes.length is 0
         parent = pre.parentNode
-        parent.removeChild pre
-        parent.onleave?()
+        try
+          parent.removeChild pre
+          parent.onleave?()
+        catch error
+          log "already removed:", error
 
   tag_pre = ->
     pre = document.createElement "pre"
