@@ -38,21 +38,28 @@ define(function(require, exports) {
     code = document.createElement("code");
     code.onclick = function(click) {
       jump(code);
-      return click.cancelBubble = true;
+      click.cancelBubble = true;
+      return click.returnValue = false;
     };
     return code;
   };
   tag_pre = function() {
-    return document.createElement("pre");
+    var pre;
+    pre = document.createElement("pre");
+    pre.onclick = function(click) {
+      jump(pre);
+      click.cancelBubble = true;
+      return click.returnValue = false;
+    };
+    return pre;
   };
   utils = require("./utils");
   utils.insertAfter();
   exports.editor = function(elem) {
-    var editor, update;
+    var all, code, editor, pre, update, _fn, _fn1, _i, _j, _len, _len1;
     editor = elem.querySelector(".cirru-editor");
     elem.appendChild(input);
-    (function() {
-      var all, code, pre, _fn, _i, _j, _len, _len1, _results;
+    try {
       editor.innerHTML = utils.render(JSON.parse(ls.list));
       log(editor.innerHTML);
       all = editor.querySelectorAll("code");
@@ -71,31 +78,29 @@ define(function(require, exports) {
         _fn(code);
       }
       all = editor.querySelectorAll("pre");
-      _results = [];
+      _fn1 = function(pre) {
+        return pre.onclick = function(click) {
+          log("jump to pre");
+          jump(pre);
+          click.returnValue = false;
+          return click.cancelBubble = true;
+        };
+      };
       for (_j = 0, _len1 = all.length; _j < _len1; _j++) {
         pre = all[_j];
-        _results.push((function(pre) {
-          return pre.onclick = function(click) {
-            log("jump to pre");
-            jump(pre);
-            click.returnValue = false;
-            return click.cancelBubble = true;
-          };
-        })(pre));
+        _fn1(pre);
       }
-      return _results;
-    })();
-    (function() {
+    } catch (error) {
       log("fallback:", error);
       curr_tag = tag_code();
-      return editor.appendChild(curr_tag);
-    });
+      editor.appendChild(curr_tag);
+    }
     update = function() {
       var left, top;
       curr_tag.innerHTML = utils.input(input);
       left = curr_tag.querySelector(".selection").offsetLeft;
       curr_tag.scrollLeft = left - 100;
-      ls.list = JSON.stringify(utils.read(editor));
+      ls.list = JSON.stringify((utils.read(editor))[0]);
       curr_tag.offsetParent = editor;
       top = curr_tag.offsetTop;
       left = curr_tag.offsetLeft;
@@ -105,11 +110,14 @@ define(function(require, exports) {
     input.onkeypress = update;
     input.onkeyup = update;
     elem.onclick = function(click) {
-      input.focus();
-      return click.returnValue = false;
+      code = tag_code();
+      editor.appendChild(code);
+      jump(code);
+      click.returnValue = false;
+      return input.focus();
     };
     return input.onkeydown = function(down) {
-      var code, pre, _ref;
+      var _ref;
       log(down.keyCode);
       if ((_ref = down.keyCode) === 9 || _ref === 13 || _ref === 32) {
         down.returnValue = false;

@@ -32,9 +32,16 @@ define (require, exports) ->
     code.onclick = (click) ->
       jump code
       click.cancelBubble = yes
+      click.returnValue = off
     code
 
-  tag_pre = -> document.createElement "pre"
+  tag_pre = ->
+    pre = document.createElement "pre"
+    pre.onclick = (click) ->
+      jump pre
+      click.cancelBubble = yes
+      click.returnValue = off
+    pre
 
   utils = require "./utils"
   utils.insertAfter()
@@ -42,7 +49,7 @@ define (require, exports) ->
   exports.editor = (elem) ->
     editor = elem.querySelector ".cirru-editor"
     elem.appendChild input
-    do ->
+    try
       editor.innerHTML = utils.render JSON.parse(ls.list)
       log editor.innerHTML
       all = editor.querySelectorAll("code")
@@ -65,7 +72,7 @@ define (require, exports) ->
             click.returnValue = off
             click.cancelBubble = yes
 
-    ->
+    catch error
       log "fallback:", error
       curr_tag = tag_code()
       editor.appendChild curr_tag
@@ -74,7 +81,7 @@ define (require, exports) ->
       curr_tag.innerHTML = utils.input input
       left = curr_tag.querySelector(".selection").offsetLeft
       curr_tag.scrollLeft = left - 100
-      ls.list = JSON.stringify (utils.read editor)
+      ls.list = JSON.stringify (utils.read editor)[0]
 
       curr_tag.offsetParent = editor
       top = curr_tag.offsetTop
@@ -86,8 +93,11 @@ define (require, exports) ->
     input.onkeyup = update
 
     elem.onclick = (click) ->
-      input.focus()
+      code = tag_code()
+      editor.appendChild code
+      jump code
       click.returnValue = no
+      input.focus()
 
     input.onkeydown = (down) ->
       log down.keyCode
