@@ -172,6 +172,11 @@ define(function(require, exports) {
             shortcut.right();
             return down.returnValue = false;
           }
+          break;
+        case 38:
+          return shortcut.up();
+        case 40:
+          return shortcut.down();
       }
     };
   };
@@ -232,6 +237,43 @@ define(function(require, exports) {
           parent.appendChild(code);
         }
         return code.click();
+      }
+    }
+  };
+  shortcut.up = function() {
+    var code, parent, place, prev;
+    prev = curr_tag.previousElementSibling;
+    while ((prev != null) && prev.tagName.toLowerCase() === "code") {
+      prev = prev.previousElementSibling;
+    }
+    if (prev != null) {
+      return prev.click();
+    } else {
+      parent = curr_tag.parentNode;
+      if (parent.className.trim() !== "cirru-editor") {
+        place = parent.parentNode;
+        code = tag_code();
+        place.insertBefore(code, parent);
+        return code.click();
+      }
+    }
+  };
+  shortcut.down = function() {
+    var code, next, parent, place;
+    next = curr_tag.nextElementSibling;
+    while ((next != null) && next.tagName.toLowerCase() === "code") {
+      next = next.nextElementSibling;
+    }
+    if (next != null) {
+      code = tag_code();
+      next.insertAdjacentElement("afterbegin", code);
+      return code.click();
+    } else {
+      parent = curr_tag.parentNode;
+      log("down", parent);
+      if (parent.className.trim() !== "cirru-editor") {
+        place = parent.parentNode;
+        return place.click();
       }
     }
   };

@@ -143,6 +143,8 @@ define (require, exports) ->
           if input.selectionStart is input.value.length
             shortcut.right()
             down.returnValue = off
+        when 38 then shortcut.up()
+        when 40 then shortcut.down()
 
   shortcut.delete = ->
     prev = curr_tag.previousElementSibling
@@ -191,5 +193,34 @@ define (require, exports) ->
         else
           parent.appendChild code
         code.click()
+
+  shortcut.up = ->
+    prev = curr_tag.previousElementSibling
+    while prev? and prev.tagName.toLowerCase() is "code"
+      prev = prev.previousElementSibling
+    if prev?
+      prev.click()
+    else
+      parent = curr_tag.parentNode
+      unless parent.className.trim() is "cirru-editor"
+        place = parent.parentNode
+        code = tag_code()
+        place.insertBefore code, parent
+        code.click()
+
+  shortcut.down = ->
+    next = curr_tag.nextElementSibling
+    while next? and next.tagName.toLowerCase() is "code"
+      next = next.nextElementSibling
+    if next?
+      code = tag_code()
+      next.insertAdjacentElement "afterbegin", code
+      code.click()
+    else
+      parent = curr_tag.parentNode
+      log "down", parent
+      unless parent.className.trim() is "cirru-editor"
+        place = parent.parentNode
+        place.click()
 
   exports
