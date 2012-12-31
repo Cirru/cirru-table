@@ -9,26 +9,36 @@ define(function(require, exports) {
   curr_tag = {};
   ls = localStorage;
   jump = function(next) {
-    var last, selection;
+    var code, last, selection;
     last = curr_tag;
-    curr_tag = next;
     selection = last.querySelector(".selection");
     log("selection", selection);
     if (selection != null) {
       last.removeChild(selection);
     }
-    input.value = next.textContent;
+    if (next.tagName.toLowerCase() === "code") {
+      input.value = next.textContent;
+      curr_tag = next;
+    } else {
+      input.value = "";
+      code = tag_code();
+      next.appendChild(code);
+      curr_tag = code;
+    }
     if (last.textContent === "") {
       last.parentNode.removeChild(last);
     }
-    input.onkeyup();
-    return last;
+    if (input.onkeyup != null) {
+      input.onkeyup();
+    }
+    return input.focus();
   };
   tag_code = function() {
     var code;
     code = document.createElement("code");
-    code.onclick = function() {
-      return jump(code);
+    code.onclick = function(click) {
+      jump(code);
+      return click.cancelBubble = true;
     };
     return code;
   };
@@ -38,24 +48,59 @@ define(function(require, exports) {
   utils = require("./utils");
   utils.insertAfter();
   exports.editor = function(elem) {
-    var editor, selection, update;
+    var editor, update;
     editor = elem.querySelector(".cirru-editor");
     elem.appendChild(input);
-    if (ls.innerHTML != null) {
-      editor.innerHTML = ls.innerHTML;
-      selection = editor.querySelector(".selection");
-      curr_tag = selection.parentNode;
+    (function() {
+      var all, code, pre, _fn, _i, _j, _len, _len1, _results;
+      editor.innerHTML = utils.render(JSON.parse(ls.list));
+      log(editor.innerHTML);
+      all = editor.querySelectorAll("code");
+      curr_tag = all[all.length - 1];
       input.value = curr_tag.textContent;
-    } else {
+      input.focus();
+      _fn = function(code) {
+        return code.onclick = function(click) {
+          jump(code);
+          click.returnValue = false;
+          return click.cancelBubble = true;
+        };
+      };
+      for (_i = 0, _len = all.length; _i < _len; _i++) {
+        code = all[_i];
+        _fn(code);
+      }
+      all = editor.querySelectorAll("pre");
+      _results = [];
+      for (_j = 0, _len1 = all.length; _j < _len1; _j++) {
+        pre = all[_j];
+        _results.push((function(pre) {
+          return pre.onclick = function(click) {
+            log("jump to pre");
+            jump(pre);
+            click.returnValue = false;
+            return click.cancelBubble = true;
+          };
+        })(pre));
+      }
+      return _results;
+    })();
+    (function() {
+      log("fallback:", error);
       curr_tag = tag_code();
-      editor.appendChild(curr_tag);
-    }
+      return editor.appendChild(curr_tag);
+    });
     update = function() {
-      var left;
+      var left, top;
       curr_tag.innerHTML = utils.input(input);
       left = curr_tag.querySelector(".selection").offsetLeft;
       curr_tag.scrollLeft = left - 100;
-      return ls.innerHTML = editor.innerHTML;
+      ls.list = JSON.stringify(utils.read(editor));
+      curr_tag.offsetParent = editor;
+      top = curr_tag.offsetTop;
+      left = curr_tag.offsetLeft;
+      input.style.top = "" + top + "px";
+      return input.style.left = "" + left + "px";
     };
     input.onkeypress = update;
     input.onkeyup = update;

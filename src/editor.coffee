@@ -8,24 +8,30 @@ define (require, exports) ->
 
   jump = (next) ->
     last = curr_tag
-    curr_tag = next
     
     selection = last.querySelector(".selection")
     log "selection", selection
-    if selection?
-      last.removeChild selection
-    input.value = next.textContent
+    if selection? then last.removeChild selection
+    if next.tagName.toLowerCase() is "code"
+      input.value = next.textContent
+      curr_tag = next
+    else
+      input.value = ""
+      code = tag_code()
+      next.appendChild code
+      curr_tag = code
 
     if last.textContent is ""
       last.parentNode.removeChild last
 
-    input.onkeyup()
-    last
+    if input.onkeyup? then input.onkeyup()
+    input.focus()
 
   tag_code = ->
     code = document.createElement "code"
-    code.onclick = ->
+    code.onclick = (click) ->
       jump code
+      click.cancelBubble = yes
     code
 
   tag_pre = -> document.createElement "pre"
@@ -36,12 +42,31 @@ define (require, exports) ->
   exports.editor = (elem) ->
     editor = elem.querySelector ".cirru-editor"
     elem.appendChild input
-    if ls.innerHTML?
-      editor.innerHTML = ls.innerHTML
-      selection = editor.querySelector ".selection"
-      curr_tag = selection.parentNode
+    do ->
+      editor.innerHTML = utils.render JSON.parse(ls.list)
+      log editor.innerHTML
+      all = editor.querySelectorAll("code")
+      curr_tag = all[all.length-1]
       input.value = curr_tag.textContent
-    else
+      input.focus()
+
+      for code in all
+        do (code) ->
+          code.onclick = (click) ->
+            jump code
+            click.returnValue = off
+            click.cancelBubble = yes
+      all = editor.querySelectorAll("pre")
+      for pre in all
+        do (pre) ->
+          pre.onclick = (click) ->
+            log "jump to pre"
+            jump pre
+            click.returnValue = off
+            click.cancelBubble = yes
+
+    ->
+      log "fallback:", error
       curr_tag = tag_code()
       editor.appendChild curr_tag
 
@@ -49,7 +74,13 @@ define (require, exports) ->
       curr_tag.innerHTML = utils.input input
       left = curr_tag.querySelector(".selection").offsetLeft
       curr_tag.scrollLeft = left - 100
-      ls.innerHTML = editor.innerHTML
+      ls.list = JSON.stringify (utils.read editor)
+
+      curr_tag.offsetParent = editor
+      top = curr_tag.offsetTop
+      left = curr_tag.offsetLeft
+      input.style.top = "#{top}px"
+      input.style.left = "#{left}px"
 
     input.onkeypress = update
     input.onkeyup = update

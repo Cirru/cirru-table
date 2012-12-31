@@ -14,7 +14,6 @@ define (require, exports) ->
     div.innerText
 
   exports.input = (input) ->
-    log input
     text = input.value
     start = input.selectionStart
     end = input.selectionEnd
@@ -43,5 +42,17 @@ define (require, exports) ->
       else
         parent.appendChild elem2
     Node.prototype.insertAfter = insertAfter
+
+  exports.read = window.read = read = (elem) ->
+    if elem.tagName.toLowerCase() is "code"
+      elem.textContent
+    else
+     Array.prototype.map.call elem.childNodes, read
+
+  exports.render = render = (list) ->
+    if Array.isArray list
+      "<pre>#{list.map(render).join("")}</pre>"
+    else if (typeof list) is "string"
+      "<code>#{escape list}</code>"
 
   exports

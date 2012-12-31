@@ -1,7 +1,5 @@
 * {
   box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  box-shadow: 0px 0px 4px #ccc;
 }
 body {
   margin: 0px;
