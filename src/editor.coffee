@@ -5,6 +5,7 @@ define (require, exports) ->
   input = document.createElement "input"
   curr_tag = {}
   ls = localStorage
+  shortcut = {}
 
   jump = (next) ->
     last = curr_tag
@@ -114,5 +115,20 @@ define (require, exports) ->
           code = tag_code()
           pre.appendChild code
           jump code
+        when 8
+          if input.selectionEnd is 0
+            shortcut.delete()
+            down.returnValue = off
+
+  shortcut.delete = ->
+    prev = curr_tag.previousElementSibling
+    if prev?
+      prev.click()
+    else
+      last = curr_tag.parentNode
+      unless last.className.trim() is "cirru-editor"
+        place = last.parentNode
+        place.removeChild last
+        place.click()
 
   exports
