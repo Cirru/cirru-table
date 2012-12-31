@@ -126,17 +126,55 @@ define (require, exports) ->
           if input.selectionEnd is 0
             shortcut.delete()
             down.returnValue = off
+        when 37 # left
+          if input.selectionEnd is 0
+            shortcut.left()
+            down.returnValue = off
+        when 39 # right
+          log input.selectionStart, input.value.length
+          if input.selectionStart is input.value.length
+            shortcut.right()
+            down.returnValue = off
 
   shortcut.delete = ->
     prev = curr_tag.previousElementSibling
     if prev?
       prev.click()
     else
-      last = curr_tag.parentNode
-      unless last.className.trim() is "cirru-editor"
-        place = last.parentNode
-        place.removeChild last
+      parent = curr_tag.parentNode
+      unless parent.className.trim() is "cirru-editor"
+        place = parent.parentNode
+        place.removeChild parent
         place.click()
         place.onleave?()
+
+  shortcut.left = ->
+    prev = curr_tag.previousElementSibling
+    if prev?
+      prev.click()
+    else
+      parent = curr_tag.parentNode
+      unless parent.className.trim() is "cirru-editor"
+        place = parent.parentNode
+        code = tag_code()
+        place.insertBefore code, parent
+        code.click()
+
+  shortcut.right = ->
+    next = curr_tag.nextElementSibling
+    if next?
+      if next.tagName.toLowerCase() is "code"
+        next.click()
+      else
+        code = tag_code()
+        next.insertAdjacentElement "afterbegin", code
+        code.click()
+    else
+      parent = curr_tag.parentNode
+      unless parent.className.trim() is "cirru-editor"
+        place = parent.parentNode
+        code = tag_code()
+        place.insertAfter code, parent
+        code.click()
 
   exports

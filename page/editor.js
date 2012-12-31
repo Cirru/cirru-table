@@ -153,21 +153,70 @@ define(function(require, exports) {
             shortcut["delete"]();
             return down.returnValue = false;
           }
+          break;
+        case 37:
+          if (input.selectionEnd === 0) {
+            shortcut.left();
+            return down.returnValue = false;
+          }
+          break;
+        case 39:
+          log(input.selectionStart, input.value.length);
+          if (input.selectionStart === input.value.length) {
+            shortcut.right();
+            return down.returnValue = false;
+          }
       }
     };
   };
   shortcut["delete"] = function() {
-    var last, place, prev;
+    var parent, place, prev;
     prev = curr_tag.previousElementSibling;
     if (prev != null) {
       return prev.click();
     } else {
-      last = curr_tag.parentNode;
-      if (last.className.trim() !== "cirru-editor") {
-        place = last.parentNode;
-        place.removeChild(last);
+      parent = curr_tag.parentNode;
+      if (parent.className.trim() !== "cirru-editor") {
+        place = parent.parentNode;
+        place.removeChild(parent);
         place.click();
         return typeof place.onleave === "function" ? place.onleave() : void 0;
+      }
+    }
+  };
+  shortcut.left = function() {
+    var code, parent, place, prev;
+    prev = curr_tag.previousElementSibling;
+    if (prev != null) {
+      return prev.click();
+    } else {
+      parent = curr_tag.parentNode;
+      if (parent.className.trim() !== "cirru-editor") {
+        place = parent.parentNode;
+        code = tag_code();
+        place.insertBefore(code, parent);
+        return code.click();
+      }
+    }
+  };
+  shortcut.right = function() {
+    var code, next, parent, place;
+    next = curr_tag.nextElementSibling;
+    if (next != null) {
+      if (next.tagName.toLowerCase() === "code") {
+        return next.click();
+      } else {
+        code = tag_code();
+        next.insertAdjacentElement("afterbegin", code);
+        return code.click();
+      }
+    } else {
+      parent = curr_tag.parentNode;
+      if (parent.className.trim() !== "cirru-editor") {
+        place = parent.parentNode;
+        code = tag_code();
+        place.insertAfter(code, parent);
+        return code.click();
       }
     }
   };
