@@ -9,7 +9,7 @@ define (require, exports) ->
 
   jump = (next) ->
     parent = curr_tag.parentNode
-    parent.onleave?()
+    log "jump:", parent, parent.onleave
     last = curr_tag
     
     selection = last.querySelector(".selection")
@@ -27,6 +27,7 @@ define (require, exports) ->
     if last.textContent is ""
       last.parentNode.removeChild last
 
+    parent.onleave?()
     input.onkeyup?()
     input.focus()
 
@@ -38,17 +39,21 @@ define (require, exports) ->
       click.returnValue = off
     code
 
+  onleave = (pre) ->
+    pre.onleave = ->
+      log "onleave", pre.childNodes
+      if pre.childNodes.length is 0
+        parent = pre.parentNode
+        parent.removeChild pre
+        parent.onleave?()
+
   tag_pre = ->
     pre = document.createElement "pre"
     pre.onclick = (click) ->
       jump pre
       click.cancelBubble = yes
       click.returnValue = off
-    pre.onleave = ->
-      if pre.childNodes.length is 0
-        parent = pre.parentNode
-        parent.removeChild pre
-        parent.onleave?()
+    onleave pre
     pre
 
   utils = require "./utils"
@@ -79,6 +84,7 @@ define (require, exports) ->
             jump pre
             click.returnValue = off
             click.cancelBubble = yes
+          onleave pre
 
     catch error
       log "fallback:", error
