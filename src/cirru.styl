@@ -1,0 +1,50 @@
+
+::-webkit-scrollbar
+  width 4px
+  height 4px
+
+::-webkit-scrollbar-track
+  width 4px
+  background hsl(0,90,95)
+
+::-webkit-scrollbar-thumb
+  background hsl(0,50,80)
+  border-radius 2px
+
+.cirru-editor-border
+  background hsl(240, 80, 90)
+  position relative
+  
+  *
+    box-sizing border-box
+  
+  input
+    width 1px
+    border none
+    outline none
+    background hsla(0, 0, 0, 0)
+    color white
+    opacity 0
+
+.cirru-editor
+  margin 100px 10px 300px
+
+  code
+    display inline-block
+    max-width 200px
+    overflow-x auto
+    padding 0px 4px
+    white-space nowrap
+    position relative
+
+    .space
+      background hsla(0,0,50,0.2)
+
+    .selection
+      background hsla(0,0,100,0.5)
+      display inline-block
+      min-width 2px
+      min-height 10px
+
+      &:empty
+        margin 0px -1px

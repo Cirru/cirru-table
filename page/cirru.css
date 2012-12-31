@@ -1,0 +1,50 @@
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+::-webkit-scrollbar-track {
+  width: 4px;
+  background: #fee7e7;
+}
+::-webkit-scrollbar-thumb {
+  background: #e6b3b3;
+  border-radius: 2px;
+}
+.cirru-editor-border {
+  background: #d1d1fa;
+  position: relative;
+}
+.cirru-editor-border * {
+  box-sizing: border-box;
+}
+.cirru-editor-border input {
+  width: 1px;
+  border: none;
+  outline: none;
+  background: rgba(0,0,0,0);
+  color: #fff;
+  opacity: 0;
+}
+.cirru-editor {
+  margin: 100px 10px 300px;
+}
+.cirru-editor code {
+  display: inline-block;
+  max-width: 200px;
+  overflow-x: auto;
+  padding: 0px 4px;
+  white-space: nowrap;
+  position: relative;
+}
+.cirru-editor code .space {
+  background: rgba(128,128,128,0.2);
+}
+.cirru-editor code .selection {
+  background: rgba(255,255,255,0.5);
+  display: inline-block;
+  min-width: 2px;
+  min-height: 10px;
+}
+.cirru-editor code .selection:empty {
+  margin: 0px -1px;
+}
