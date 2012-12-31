@@ -33,15 +33,16 @@ define (require, exports) ->
     input.selectionEnd = start + 1
     input.onkeyup()
 
-  exports.insertAfter = ->
-    insertAfter = (elem2) ->
+  exports.after = ->
+    after = (elem2) ->
       parent = @parentNode
       next = @nextElementSibling
+      log "after:", parent, next
       if next?
         parent.insertBefore elem2, next
       else
         parent.appendChild elem2
-    Node.prototype.insertAfter = insertAfter
+    Node.prototype.after = after
 
   exports.read = window.read = read = (elem) ->
     if elem.tagName.toLowerCase() is "code"

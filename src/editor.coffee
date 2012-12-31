@@ -9,11 +9,10 @@ define (require, exports) ->
 
   jump = (next) ->
     parent = curr_tag.parentNode
-    log "jump:", parent, parent.onleave
     last = curr_tag
     
     selection = last.querySelector(".selection")
-    log "selection", selection
+    # log "selection", selection
     if selection? then last.removeChild selection
     if next.tagName.toLowerCase() is "code"
       input.value = next.textContent
@@ -60,14 +59,14 @@ define (require, exports) ->
     pre
 
   utils = require "./utils"
-  utils.insertAfter()
+  utils.after()
 
   exports.editor = (elem) ->
     editor = elem.querySelector ".cirru-editor"
     elem.appendChild input
     try
       editor.innerHTML = utils.render JSON.parse(ls.list)
-      log editor.innerHTML
+      # log editor.innerHTML
       all = editor.querySelectorAll("code")
       curr_tag = all[all.length-1]
       input.value = curr_tag.textContent
@@ -83,7 +82,7 @@ define (require, exports) ->
       for pre in all
         do (pre) ->
           pre.onclick = (click) ->
-            log "jump to pre"
+            # log "jump to pre"
             jump pre
             click.returnValue = off
             click.cancelBubble = yes
@@ -123,11 +122,11 @@ define (require, exports) ->
         when 9 then utils.tab input
         when 32 # then spacebar
           code = tag_code()
-          curr_tag.insertAfter code
+          curr_tag.after code
           jump code
         when 13 # enter key
           pre = tag_pre()
-          curr_tag.insertAfter pre
+          curr_tag.after pre
           code = tag_code()
           pre.appendChild code
           jump code
@@ -164,9 +163,12 @@ define (require, exports) ->
     else
       parent = curr_tag.parentNode
       unless parent.className.trim() is "cirru-editor"
-        place = parent.parentNode
         code = tag_code()
-        place.insertBefore code, parent
+        if curr_tag.textContent is ""
+          place = parent.parentNode
+          place.insertBefore code, parent
+        else
+          parent.insertBefore code, curr_tag
         code.click()
 
   shortcut.right = ->
@@ -180,10 +182,14 @@ define (require, exports) ->
         code.click()
     else
       parent = curr_tag.parentNode
+      log "this parent", parent
       unless parent.className.trim() is "cirru-editor"
-        place = parent.parentNode
+        log "follows", parent
         code = tag_code()
-        place.insertAfter code, parent
+        if curr_tag.textContent is ""
+          parent.after code
+        else
+          parent.appendChild code
         code.click()
 
   exports

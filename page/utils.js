@@ -36,19 +36,20 @@ define(function(require, exports) {
     input.selectionEnd = start + 1;
     return input.onkeyup();
   };
-  exports.insertAfter = function() {
-    var insertAfter;
-    insertAfter = function(elem2) {
+  exports.after = function() {
+    var after;
+    after = function(elem2) {
       var next, parent;
       parent = this.parentNode;
       next = this.nextElementSibling;
+      log("after:", parent, next);
       if (next != null) {
         return parent.insertBefore(elem2, next);
       } else {
         return parent.appendChild(elem2);
       }
     };
-    return Node.prototype.insertAfter = insertAfter;
+    return Node.prototype.after = after;
   };
   exports.read = window.read = read = function(elem) {
     if (elem.tagName.toLowerCase() === "code") {

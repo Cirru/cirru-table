@@ -12,10 +12,8 @@ define(function(require, exports) {
   jump = function(next) {
     var code, last, parent, selection;
     parent = curr_tag.parentNode;
-    log("jump:", parent, parent.onleave);
     last = curr_tag;
     selection = last.querySelector(".selection");
-    log("selection", selection);
     if (selection != null) {
       last.removeChild(selection);
     }
@@ -76,14 +74,13 @@ define(function(require, exports) {
     return pre;
   };
   utils = require("./utils");
-  utils.insertAfter();
+  utils.after();
   exports.editor = function(elem) {
     var all, code, editor, pre, update, _fn, _fn1, _i, _j, _len, _len1;
     editor = elem.querySelector(".cirru-editor");
     elem.appendChild(input);
     try {
       editor.innerHTML = utils.render(JSON.parse(ls.list));
-      log(editor.innerHTML);
       all = editor.querySelectorAll("code");
       curr_tag = all[all.length - 1];
       input.value = curr_tag.textContent;
@@ -102,7 +99,6 @@ define(function(require, exports) {
       all = editor.querySelectorAll("pre");
       _fn1 = function(pre) {
         pre.onclick = function(click) {
-          log("jump to pre");
           jump(pre);
           click.returnValue = false;
           return click.cancelBubble = true;
@@ -150,11 +146,11 @@ define(function(require, exports) {
           return utils.tab(input);
         case 32:
           code = tag_code();
-          curr_tag.insertAfter(code);
+          curr_tag.after(code);
           return jump(code);
         case 13:
           pre = tag_pre();
-          curr_tag.insertAfter(pre);
+          curr_tag.after(pre);
           code = tag_code();
           pre.appendChild(code);
           return jump(code);
@@ -202,15 +198,19 @@ define(function(require, exports) {
     } else {
       parent = curr_tag.parentNode;
       if (parent.className.trim() !== "cirru-editor") {
-        place = parent.parentNode;
         code = tag_code();
-        place.insertBefore(code, parent);
+        if (curr_tag.textContent === "") {
+          place = parent.parentNode;
+          place.insertBefore(code, parent);
+        } else {
+          parent.insertBefore(code, curr_tag);
+        }
         return code.click();
       }
     }
   };
   shortcut.right = function() {
-    var code, next, parent, place;
+    var code, next, parent;
     next = curr_tag.nextElementSibling;
     if (next != null) {
       if (next.tagName.toLowerCase() === "code") {
@@ -222,10 +222,15 @@ define(function(require, exports) {
       }
     } else {
       parent = curr_tag.parentNode;
+      log("this parent", parent);
       if (parent.className.trim() !== "cirru-editor") {
-        place = parent.parentNode;
+        log("follows", parent);
         code = tag_code();
-        place.insertAfter(code, parent);
+        if (curr_tag.textContent === "") {
+          parent.after(code);
+        } else {
+          parent.appendChild(code);
+        }
         return code.click();
       }
     }
