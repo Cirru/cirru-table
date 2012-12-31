@@ -117,7 +117,7 @@ define (require, exports) ->
 
     input.onkeydown = (down) ->
       log down.keyCode
-      if down.keyCode in [9,13,32] then down.returnValue = off
+      if down.keyCode in [9,13,32,33,34] then down.returnValue = off
       switch down.keyCode
         when 9 then utils.tab input
         when 32 # then spacebar
@@ -145,82 +145,116 @@ define (require, exports) ->
             down.returnValue = off
         when 38 then shortcut.up()
         when 40 then shortcut.down()
+        when 33 then shortcut.pgup()
+        when 34 then shortcut.pgdown()
 
-  shortcut.delete = ->
-    prev = curr_tag.previousElementSibling
-    if prev?
-      prev.click()
-    else
-      parent = curr_tag.parentNode
-      unless parent.className.trim() is "cirru-editor"
-        place = parent.parentNode
-        place.removeChild parent
-        place.click()
-        place.onleave?()
-
-  shortcut.left = ->
-    prev = curr_tag.previousElementSibling
-    if prev?
-      prev.click()
-    else
-      parent = curr_tag.parentNode
-      unless parent.className.trim() is "cirru-editor"
-        code = tag_code()
-        if curr_tag.textContent is ""
-          place = parent.parentNode
-          place.insertBefore code, parent
-        else
-          parent.insertBefore code, curr_tag
-        code.click()
-
-  shortcut.right = ->
-    next = curr_tag.nextElementSibling
-    if next?
-      if next.tagName.toLowerCase() is "code"
-        next.click()
+    shortcut.delete = ->
+      prev = curr_tag.previousElementSibling
+      if prev?
+        prev.click()
       else
+        parent = curr_tag.parentNode
+        unless parent.className is "cirru-editor"
+          place = parent.parentNode
+          place.removeChild parent
+          place.click()
+          place.onleave?()
+
+    shortcut.left = ->
+      prev = curr_tag.previousElementSibling
+      if prev?
+        prev.click()
+      else
+        parent = curr_tag.parentNode
+        unless parent.className is "cirru-editor"
+          code = tag_code()
+          if curr_tag.textContent is ""
+            place = parent.parentNode
+            place.insertBefore code, parent
+          else
+            parent.insertBefore code, curr_tag
+          code.click()
+
+    shortcut.right = ->
+      next = curr_tag.nextElementSibling
+      if next?
+        if next.tagName.toLowerCase() is "code"
+          next.click()
+        else
+          code = tag_code()
+          next.insertAdjacentElement "afterbegin", code
+          code.click()
+      else
+        parent = curr_tag.parentNode
+        log "this parent", parent
+        unless parent.className is "cirru-editor"
+          log "follows", parent
+          code = tag_code()
+          if curr_tag.textContent is ""
+            parent.after code
+          else
+            parent.appendChild code
+          code.click()
+
+    shortcut.up = ->
+      prev = curr_tag.previousElementSibling
+      while prev? and prev.tagName.toLowerCase() is "code"
+        prev = prev.previousElementSibling
+      if prev?
+        prev.click()
+      else
+        parent = curr_tag.parentNode
+        unless parent.className is "cirru-editor"
+          place = parent.parentNode
+          code = tag_code()
+          place.insertBefore code, parent
+          code.click()
+
+    shortcut.down = ->
+      next = curr_tag.nextElementSibling
+      while next? and next.tagName.toLowerCase() is "code"
+        next = next.nextElementSibling
+      if next?
         code = tag_code()
         next.insertAdjacentElement "afterbegin", code
         code.click()
-    else
-      parent = curr_tag.parentNode
-      log "this parent", parent
-      unless parent.className.trim() is "cirru-editor"
-        log "follows", parent
+      else
+        parent = curr_tag.parentNode
+        log "down", parent
+        unless parent.className is "cirru-editor"
+          place = parent.parentNode
+          place.click()
+
+    shortcut.pgup = ->
+      parent = curr_tag
+      until parent.parentNode.className is "cirru-editor"
+        parent = parent.parentNode
+        log parent
+      prev = parent.previousElementSibling
+      if prev?
+        prev.click()
+      else
+        pre = tag_pre()
         code = tag_code()
-        if curr_tag.textContent is ""
-          parent.after code
-        else
-          parent.appendChild code
+        editor.insertAdjacentElement "afterbegin", pre
+        log "editor", editor
+        pre.appendChild code
         code.click()
 
-  shortcut.up = ->
-    prev = curr_tag.previousElementSibling
-    while prev? and prev.tagName.toLowerCase() is "code"
-      prev = prev.previousElementSibling
-    if prev?
-      prev.click()
-    else
-      parent = curr_tag.parentNode
-      unless parent.className.trim() is "cirru-editor"
-        place = parent.parentNode
+    shortcut.pgdown = ->
+      parent = curr_tag
+      until parent.parentNode.className is "cirru-editor"
+        parent = parent.parentNode
+        log parent
+      next = parent.nextElementSibling
+      if next?
+        next.click()
+      else
+        pre = tag_pre()
         code = tag_code()
-        place.insertBefore code, parent
+        editor.appendChild pre
+        log "editor", editor
+        pre.appendChild code
         code.click()
-
-  shortcut.down = ->
-    next = curr_tag.nextElementSibling
-    while next? and next.tagName.toLowerCase() is "code"
-      next = next.nextElementSibling
-    if next?
-      code = tag_code()
-      next.insertAdjacentElement "afterbegin", code
-      code.click()
-    else
-      parent = curr_tag.parentNode
-      log "down", parent
-      unless parent.className.trim() is "cirru-editor"
-        place = parent.parentNode
-        place.click()
 
   exports

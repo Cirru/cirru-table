@@ -135,10 +135,10 @@ define(function(require, exports) {
       click.returnValue = false;
       return input.focus();
     };
-    return input.onkeydown = function(down) {
+    input.onkeydown = function(down) {
       var _ref;
       log(down.keyCode);
-      if ((_ref = down.keyCode) === 9 || _ref === 13 || _ref === 32) {
+      if ((_ref = down.keyCode) === 9 || _ref === 13 || _ref === 32 || _ref === 33 || _ref === 34) {
         down.returnValue = false;
       }
       switch (down.keyCode) {
@@ -177,105 +177,147 @@ define(function(require, exports) {
           return shortcut.up();
         case 40:
           return shortcut.down();
+        case 33:
+          return shortcut.pgup();
+        case 34:
+          return shortcut.pgdown();
       }
     };
-  };
-  shortcut["delete"] = function() {
-    var parent, place, prev;
-    prev = curr_tag.previousElementSibling;
-    if (prev != null) {
-      return prev.click();
-    } else {
-      parent = curr_tag.parentNode;
-      if (parent.className.trim() !== "cirru-editor") {
-        place = parent.parentNode;
-        place.removeChild(parent);
-        place.click();
-        return typeof place.onleave === "function" ? place.onleave() : void 0;
-      }
-    }
-  };
-  shortcut.left = function() {
-    var code, parent, place, prev;
-    prev = curr_tag.previousElementSibling;
-    if (prev != null) {
-      return prev.click();
-    } else {
-      parent = curr_tag.parentNode;
-      if (parent.className.trim() !== "cirru-editor") {
-        code = tag_code();
-        if (curr_tag.textContent === "") {
-          place = parent.parentNode;
-          place.insertBefore(code, parent);
-        } else {
-          parent.insertBefore(code, curr_tag);
-        }
-        return code.click();
-      }
-    }
-  };
-  shortcut.right = function() {
-    var code, next, parent;
-    next = curr_tag.nextElementSibling;
-    if (next != null) {
-      if (next.tagName.toLowerCase() === "code") {
-        return next.click();
+    shortcut["delete"] = function() {
+      var parent, place, prev;
+      prev = curr_tag.previousElementSibling;
+      if (prev != null) {
+        return prev.click();
       } else {
+        parent = curr_tag.parentNode;
+        if (parent.className !== "cirru-editor") {
+          place = parent.parentNode;
+          place.removeChild(parent);
+          place.click();
+          return typeof place.onleave === "function" ? place.onleave() : void 0;
+        }
+      }
+    };
+    shortcut.left = function() {
+      var parent, place, prev;
+      prev = curr_tag.previousElementSibling;
+      if (prev != null) {
+        return prev.click();
+      } else {
+        parent = curr_tag.parentNode;
+        if (parent.className !== "cirru-editor") {
+          code = tag_code();
+          if (curr_tag.textContent === "") {
+            place = parent.parentNode;
+            place.insertBefore(code, parent);
+          } else {
+            parent.insertBefore(code, curr_tag);
+          }
+          return code.click();
+        }
+      }
+    };
+    shortcut.right = function() {
+      var next, parent;
+      next = curr_tag.nextElementSibling;
+      if (next != null) {
+        if (next.tagName.toLowerCase() === "code") {
+          return next.click();
+        } else {
+          code = tag_code();
+          next.insertAdjacentElement("afterbegin", code);
+          return code.click();
+        }
+      } else {
+        parent = curr_tag.parentNode;
+        log("this parent", parent);
+        if (parent.className !== "cirru-editor") {
+          log("follows", parent);
+          code = tag_code();
+          if (curr_tag.textContent === "") {
+            parent.after(code);
+          } else {
+            parent.appendChild(code);
+          }
+          return code.click();
+        }
+      }
+    };
+    shortcut.up = function() {
+      var parent, place, prev;
+      prev = curr_tag.previousElementSibling;
+      while ((prev != null) && prev.tagName.toLowerCase() === "code") {
+        prev = prev.previousElementSibling;
+      }
+      if (prev != null) {
+        return prev.click();
+      } else {
+        parent = curr_tag.parentNode;
+        if (parent.className !== "cirru-editor") {
+          place = parent.parentNode;
+          code = tag_code();
+          place.insertBefore(code, parent);
+          return code.click();
+        }
+      }
+    };
+    shortcut.down = function() {
+      var next, parent, place;
+      next = curr_tag.nextElementSibling;
+      while ((next != null) && next.tagName.toLowerCase() === "code") {
+        next = next.nextElementSibling;
+      }
+      if (next != null) {
         code = tag_code();
         next.insertAdjacentElement("afterbegin", code);
         return code.click();
-      }
-    } else {
-      parent = curr_tag.parentNode;
-      log("this parent", parent);
-      if (parent.className.trim() !== "cirru-editor") {
-        log("follows", parent);
-        code = tag_code();
-        if (curr_tag.textContent === "") {
-          parent.after(code);
-        } else {
-          parent.appendChild(code);
+      } else {
+        parent = curr_tag.parentNode;
+        log("down", parent);
+        if (parent.className !== "cirru-editor") {
+          place = parent.parentNode;
+          return place.click();
         }
-        return code.click();
       }
-    }
-  };
-  shortcut.up = function() {
-    var code, parent, place, prev;
-    prev = curr_tag.previousElementSibling;
-    while ((prev != null) && prev.tagName.toLowerCase() === "code") {
-      prev = prev.previousElementSibling;
-    }
-    if (prev != null) {
-      return prev.click();
-    } else {
-      parent = curr_tag.parentNode;
-      if (parent.className.trim() !== "cirru-editor") {
-        place = parent.parentNode;
+    };
+    shortcut.pgup = function() {
+      var parent, prev;
+      parent = curr_tag;
+      while (parent.parentNode.className !== "cirru-editor") {
+        parent = parent.parentNode;
+        log(parent);
+      }
+      prev = parent.previousElementSibling;
+      if (prev != null) {
+        return prev.click();
+      } else {
+        pre = tag_pre();
         code = tag_code();
-        place.insertBefore(code, parent);
+        editor.insertAdjacentElement("afterbegin", pre);
+        log("editor", editor);
+        pre.appendChild(code);
         return code.click();
       }
-    }
-  };
-  shortcut.down = function() {
-    var code, next, parent, place;
-    next = curr_tag.nextElementSibling;
-    while ((next != null) && next.tagName.toLowerCase() === "code") {
-      next = next.nextElementSibling;
-    }
-    if (next != null) {
-      code = tag_code();
-      next.insertAdjacentElement("afterbegin", code);
-      return code.click();
-    } else {
-      parent = curr_tag.parentNode;
-      log("down", parent);
-      if (parent.className.trim() !== "cirru-editor") {
-        place = parent.parentNode;
-        return place.click();
+    };
+    return shortcut.pgdown = function() {
+      var next, parent;
+      parent = curr_tag;
+      while (parent.parentNode.className !== "cirru-editor") {
+        parent = parent.parentNode;
+        log(parent);
       }
-    }
+      next = parent.nextElementSibling;
+      if (next != null) {
+        return next.click();
+      } else {
+        pre = tag_pre();
+        code = tag_code();
+        editor.appendChild(pre);
+        log("editor", editor);
+        pre.appendChild(code);
+        return code.click();
+      }
+    };
   };
   return exports;
 });
