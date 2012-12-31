@@ -49,10 +49,13 @@ define (require, exports) ->
     else
      Array.prototype.map.call elem.childNodes, read
 
-  exports.render = render = (list) ->
+  render = (list) ->
     if Array.isArray list
       "<pre>#{list.map(render).join("")}</pre>"
     else if (typeof list) is "string"
       "<code>#{escape list}</code>"
+  exports.render = (list) ->
+    html = render list
+    html[5...-6]
 
   exports

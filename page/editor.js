@@ -10,7 +10,11 @@ define(function(require, exports) {
   ls = localStorage;
   shortcut = {};
   jump = function(next) {
-    var code, last, selection;
+    var code, last, parent, selection;
+    parent = curr_tag.parentNode;
+    if (typeof parent.onleave === "function") {
+      parent.onleave();
+    }
     last = curr_tag;
     selection = last.querySelector(".selection");
     log("selection", selection);
@@ -29,7 +33,7 @@ define(function(require, exports) {
     if (last.textContent === "") {
       last.parentNode.removeChild(last);
     }
-    if (input.onkeyup != null) {
+    if (typeof input.onkeyup === "function") {
       input.onkeyup();
     }
     return input.focus();
@@ -51,6 +55,14 @@ define(function(require, exports) {
       jump(pre);
       click.cancelBubble = true;
       return click.returnValue = false;
+    };
+    pre.onleave = function() {
+      var parent;
+      if (pre.childNodes.length === 0) {
+        parent = pre.parentNode;
+        parent.removeChild(pre);
+        return typeof parent.onleave === "function" ? parent.onleave() : void 0;
+      }
     };
     return pre;
   };
@@ -101,7 +113,7 @@ define(function(require, exports) {
       curr_tag.innerHTML = utils.input(input);
       left = curr_tag.querySelector(".selection").offsetLeft;
       curr_tag.scrollLeft = left - 100;
-      ls.list = JSON.stringify((utils.read(editor))[0]);
+      ls.list = JSON.stringify(utils.read(editor));
       curr_tag.offsetParent = editor;
       top = curr_tag.offsetTop;
       left = curr_tag.offsetLeft;
@@ -154,7 +166,8 @@ define(function(require, exports) {
       if (last.className.trim() !== "cirru-editor") {
         place = last.parentNode;
         place.removeChild(last);
-        return place.click();
+        place.click();
+        return typeof place.onleave === "function" ? place.onleave() : void 0;
       }
     }
   };

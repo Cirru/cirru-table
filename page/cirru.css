@@ -38,7 +38,7 @@
   padding: 0px 4px;
   white-space: nowrap;
   position: relative;
-  color: #fff;
+  color: rgba(204,204,204,0.8);
 }
 .cirru-editor code .space {
   background: rgba(230,230,230,0.2);
@@ -58,4 +58,7 @@
 }
 .cirru-editor pre:hover {
   box-shadow: -2px 0px 0px rgba(230,230,230,0.6);
+}
+.cirru-editor pre code {
+  color: #fff;
 }

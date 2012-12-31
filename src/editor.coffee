@@ -8,6 +8,8 @@ define (require, exports) ->
   shortcut = {}
 
   jump = (next) ->
+    parent = curr_tag.parentNode
+    parent.onleave?()
     last = curr_tag
     
     selection = last.querySelector(".selection")
@@ -25,7 +27,7 @@ define (require, exports) ->
     if last.textContent is ""
       last.parentNode.removeChild last
 
-    if input.onkeyup? then input.onkeyup()
+    input.onkeyup?()
     input.focus()
 
   tag_code = ->
@@ -42,6 +44,11 @@ define (require, exports) ->
       jump pre
       click.cancelBubble = yes
       click.returnValue = off
+    pre.onleave = ->
+      if pre.childNodes.length is 0
+        parent = pre.parentNode
+        parent.removeChild pre
+        parent.onleave?()
     pre
 
   utils = require "./utils"
@@ -82,7 +89,7 @@ define (require, exports) ->
       curr_tag.innerHTML = utils.input input
       left = curr_tag.querySelector(".selection").offsetLeft
       curr_tag.scrollLeft = left - 100
-      ls.list = JSON.stringify (utils.read editor)[0]
+      ls.list = JSON.stringify (utils.read editor)
 
       curr_tag.offsetParent = editor
       top = curr_tag.offsetTop
@@ -105,17 +112,17 @@ define (require, exports) ->
       if down.keyCode in [9,13,32] then down.returnValue = off
       switch down.keyCode
         when 9 then utils.tab input
-        when 32
+        when 32 # then spacebar
           code = tag_code()
           curr_tag.insertAfter code
           jump code
-        when 13
+        when 13 # enter key
           pre = tag_pre()
           curr_tag.insertAfter pre
           code = tag_code()
           pre.appendChild code
           jump code
-        when 8
+        when 8 # backspace
           if input.selectionEnd is 0
             shortcut.delete()
             down.returnValue = off
@@ -130,5 +137,6 @@ define (require, exports) ->
         place = last.parentNode
         place.removeChild last
         place.click()
+        place.onleave?()
 
   exports

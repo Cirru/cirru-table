@@ -57,12 +57,17 @@ define(function(require, exports) {
       return Array.prototype.map.call(elem.childNodes, read);
     }
   };
-  exports.render = render = function(list) {
+  render = function(list) {
     if (Array.isArray(list)) {
       return "<pre>" + (list.map(render).join("")) + "</pre>";
     } else if ((typeof list) === "string") {
       return "<code>" + (escape(list)) + "</code>";
     }
+  };
+  exports.render = function(list) {
+    var html;
+    html = render(list);
+    return html.slice(5, -6);
   };
   return exports;
 });
