@@ -4,6 +4,7 @@ define (require, exports) ->
   log = -> console.log.apply console, arguments
   input = document.createElement "input"
   curr_tag = {}
+  ls = localStorage
 
   jump = (next) ->
     last = curr_tag
@@ -19,6 +20,7 @@ define (require, exports) ->
       last.parentNode.removeChild last
 
     input.onkeyup()
+    last
 
   tag_code = ->
     code = document.createElement "code"
@@ -29,17 +31,26 @@ define (require, exports) ->
   tag_pre = -> document.createElement "pre"
 
   utils = require "./utils"
+  utils.insertAfter()
 
   exports.editor = (elem) ->
     editor = elem.querySelector ".cirru-editor"
-    curr_tag = tag_code()
     elem.appendChild input
-    editor.appendChild curr_tag
+    if ls.innerHTML?
+      editor.innerHTML = ls.innerHTML
+      selection = editor.querySelector ".selection"
+      curr_tag = selection.parentNode
+      input.value = curr_tag.textContent
+    else
+      curr_tag = tag_code()
+      editor.appendChild curr_tag
 
     update = ->
       curr_tag.innerHTML = utils.input input
       left = curr_tag.querySelector(".selection").offsetLeft
       curr_tag.scrollLeft = left - 100
+      ls.innerHTML = editor.innerHTML
+
     input.onkeypress = update
     input.onkeyup = update
 
@@ -49,17 +60,18 @@ define (require, exports) ->
 
     input.onkeydown = (down) ->
       log down.keyCode
+      if down.keyCode in [9,13,32] then down.returnValue = off
       switch down.keyCode
-        when 9 then utils.tab input, down
+        when 9 then utils.tab input
         when 32
-          down.returnValue = off
-          parent = curr_tag.parentNode
-          new_tag = tag_code()
-          next = new_tag.nextElementSibling
-          if next?
-            parent.insertBefore new_tag, next
-          else
-            parent.appendChild new_tag
-          jump new_tag
+          code = tag_code()
+          curr_tag.insertAfter code
+          jump code
+        when 13
+          pre = tag_pre()
+          curr_tag.insertAfter pre
+          code = tag_code()
+          pre.appendChild code
+          jump code
 
   exports

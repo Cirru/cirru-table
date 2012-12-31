@@ -26,7 +26,7 @@ define(function(require, exports) {
     s3 = escape(text.slice(end));
     return "" + s1 + s2 + s3;
   };
-  exports.tab = function(input, down) {
+  exports.tab = function(input) {
     var end, start, text;
     log(input);
     start = input.selectionStart;
@@ -35,8 +35,21 @@ define(function(require, exports) {
     input.value = text.slice(0, start) + " " + text.slice(end);
     input.selectionStart = start + 1;
     input.selectionEnd = start + 1;
-    input.onkeyup();
-    return down.returnValue = false;
+    return input.onkeyup();
+  };
+  exports.insertAfter = function() {
+    var insertAfter;
+    insertAfter = function(elem2) {
+      var next, parent;
+      parent = this.parentNode;
+      next = this.nextElementSibling;
+      if (next != null) {
+        return parent.insertBefore(elem2, next);
+      } else {
+        return parent.appendChild(elem2);
+      }
+    };
+    return Node.prototype.insertAfter = insertAfter;
   };
   return exports;
 });

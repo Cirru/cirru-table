@@ -24,7 +24,7 @@ define (require, exports) ->
     s3 = escape text[end...]
     "#{s1}#{s2}#{s3}"
 
-  exports.tab = (input, down) ->
+  exports.tab = (input) ->
     log input
     start = input.selectionStart
     end = input.selectionEnd
@@ -33,6 +33,15 @@ define (require, exports) ->
     input.selectionStart = start + 1
     input.selectionEnd = start + 1
     input.onkeyup()
-    down.returnValue = off
+
+  exports.insertAfter = ->
+    insertAfter = (elem2) ->
+      parent = @parentNode
+      next = @nextElementSibling
+      if next?
+        parent.insertBefore elem2, next
+      else
+        parent.appendChild elem2
+    Node.prototype.insertAfter = insertAfter
 
   exports
