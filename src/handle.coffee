@@ -7,7 +7,11 @@ define (require, exports) ->
   cirru = require("./editor")
   cirru.editor (q "#editor")
 
-  delay 4000, ->
-    log cirru.content()
+  delay 2000, ->
+    ret = cirru.content()
+    log ret
+    delay 2000, ->
+      ret.push ret.concat()
+      cirru.content ret
 
   exports

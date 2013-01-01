@@ -14,8 +14,14 @@ define(function(require, exports) {
   };
   cirru = require("./editor");
   cirru.editor(q("#editor"));
-  delay(4000, function() {
-    return log(cirru.content());
+  delay(2000, function() {
+    var ret;
+    ret = cirru.content();
+    log(ret);
+    return delay(2000, function() {
+      ret.push(ret.concat());
+      return cirru.content(ret);
+    });
   });
   return exports;
 });

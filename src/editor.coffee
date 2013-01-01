@@ -40,7 +40,7 @@ define (require, exports) ->
 
   onleave = (pre) ->
     pre.onleave = ->
-      log "onleave", pre.childNodes
+      # log "onleave", pre.childNodes
       if pre.childNodes.length is 0
         parent = pre.parentNode
         try
@@ -61,11 +61,9 @@ define (require, exports) ->
   utils = require "./utils"
   utils.after()
 
-  exports.editor = (elem) ->
-    editor = elem.querySelector ".cirru-editor"
-    elem.appendChild input
+  load = (elem, editor, list) ->
     try
-      editor.innerHTML = utils.render JSON.parse(ls.list)
+      editor.innerHTML = utils.render list
       # log editor.innerHTML
       all = editor.querySelectorAll("code")
       curr_tag = all[all.length-1]
@@ -88,10 +86,17 @@ define (require, exports) ->
             click.cancelBubble = yes
           onleave pre
 
+      editor.click()
     catch error
       log "fallback:", error
       curr_tag = tag_code()
       editor.appendChild curr_tag
+
+  exports.editor = (elem) ->
+    editor = elem.querySelector ".cirru-editor"
+    elem.appendChild input
+
+    load elem, editor, JSON.parse(ls.list)
 
     update = ->
       curr_tag.innerHTML = utils.input input
@@ -257,10 +262,13 @@ define (require, exports) ->
         pre.appendChild code
         code.click()
 
-    exports.content = ->
-      editor.click()
-      list = utils.read editor
-      list.pop()
-      list
+    exports.content = (list) ->
+      if list?
+        load elem, editor, list
+      else
+        editor.click()
+        list = utils.read editor
+        list.pop()
+        list
 
   exports
