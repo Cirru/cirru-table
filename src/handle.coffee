@@ -4,6 +4,10 @@ define (require, exports) ->
   delay = (f, t) -> setTimeout t, f
   q = (query) -> document.querySelector query
 
-  require("./editor").editor (q "#editor")
+  cirru = require("./editor")
+  cirru.editor (q "#editor")
+
+  delay 4000, ->
+    log cirru.content()
 
   exports

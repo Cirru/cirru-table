@@ -13,6 +13,7 @@
 .cirru-editor-border {
   background: #a3a3f5;
   position: relative;
+  overflow: scroll;
 }
 .cirru-editor-border * {
   box-sizing: border-box;

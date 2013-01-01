@@ -299,7 +299,7 @@ define(function(require, exports) {
         return code.click();
       }
     };
-    return shortcut.pgdown = function() {
+    shortcut.pgdown = function() {
       var next, parent;
       parent = curr_tag;
       while (parent.parentNode.className !== "cirru-editor") {
@@ -317,6 +317,13 @@ define(function(require, exports) {
         pre.appendChild(code);
         return code.click();
       }
+    };
+    return exports.content = function() {
+      var list;
+      editor.click();
+      list = utils.read(editor);
+      list.pop();
+      return list;
     };
   };
   return exports;

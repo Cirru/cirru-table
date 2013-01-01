@@ -257,4 +257,10 @@ define (require, exports) ->
         pre.appendChild code
         code.click()
 
+    exports.content = ->
+      editor.click()
+      list = utils.read editor
+      list.pop()
+      list
+
   exports

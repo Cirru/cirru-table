@@ -11,6 +11,5 @@ body {
 body #editor {
   width: 800px;
   height: 400px;
-  overflow: scroll;
   margin: 40px;
 }
