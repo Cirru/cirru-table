@@ -90,7 +90,15 @@ define (require, exports) ->
     catch error
       log "fallback:", error
       curr_tag = tag_code()
+      editor.innerHTML = ""
       editor.appendChild curr_tag
+
+  fold = (pre) ->
+    if pre.tagName.toLowerCase() is "pre"
+      pre.className = "fold"
+      if pre.parentNode.className is "fold"
+        pre.parentNode.className = ""
+      Array.prototype.map.call pre.childNodes, fold
 
   exports.editor = (elem) ->
     editor = elem.querySelector ".cirru-editor"
@@ -109,6 +117,15 @@ define (require, exports) ->
       left = curr_tag.offsetLeft
       input.style.top = "#{top}px"
       input.style.left = "#{left}px"
+
+      Array.prototype.map.call editor.childNodes, fold
+
+      start = elem.scrollTop
+      height = elem.offsetHeight
+      if top < start
+        elem.scrollTop = top - (height / 2)
+      else if top > (height + start)
+        elem.scrollTop = top + (height / 2)
 
     input.onkeypress = update
     input.onkeyup = update
@@ -227,8 +244,9 @@ define (require, exports) ->
         parent = curr_tag.parentNode
         log "down", parent
         unless parent.className is "cirru-editor"
-          place = parent.parentNode
-          place.click()
+          code = tag_code()
+          parent.after code
+          code.click()
 
     shortcut.pgup = ->
       parent = curr_tag
@@ -236,6 +254,8 @@ define (require, exports) ->
         parent = parent.parentNode
         log parent
       prev = parent.previousElementSibling
+      while prev?.previousElementSibling?.tagName.toLowerCase() is "code"
+        prev = prev.previousElementSibling
       if prev?
         prev.click()
       else
@@ -252,6 +272,8 @@ define (require, exports) ->
         parent = parent.parentNode
         log parent
       next = parent.nextElementSibling
+      while next?.nextElementSibling?.tagName.toLowerCase() is "code"
+        next = next.nextElementSibling
       if next?
         next.click()
       else
@@ -270,5 +292,7 @@ define (require, exports) ->
         list = utils.read editor
         list.pop()
         list
+
+    exports.focus = -> editor.focus()
 
   exports

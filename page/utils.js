@@ -6,7 +6,7 @@ define(function(require, exports) {
     return console.log.apply(console, arguments);
   };
   exports.escape = escape = function(str) {
-    return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\s/g, "<span class='space'>&nbsp;</span>");
+    return str.toString().replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\s/g, "<span class='space'>&nbsp;</span>");
   };
   exports.unescape = function(str) {
     var div;
@@ -59,14 +59,16 @@ define(function(require, exports) {
     }
   };
   render = function(list) {
+    var _ref;
     if (Array.isArray(list)) {
       return "<pre>" + (list.map(render).join("")) + "</pre>";
-    } else if ((typeof list) === "string") {
+    } else if ((_ref = typeof list) === "string" || _ref === "number") {
       return "<code>" + (escape(list)) + "</code>";
     }
   };
   exports.render = function(list) {
     var html;
+    log("render:", list);
     html = render(list);
     return html.slice(5, -6);
   };

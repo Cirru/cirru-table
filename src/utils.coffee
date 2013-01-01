@@ -3,7 +3,7 @@ define (require, exports) ->
   log = -> console.log.apply console, arguments
 
   exports.escape = escape = (str) ->
-    str.replace(/&/g, "&amp;")
+    str.toString().replace(/&/g, "&amp;")
       .replace(/</g, "&lt;")
       .replace(/>/g, "&gt;")
       .replace(/\s/g, "<span class='space'>&nbsp;</span>")
@@ -53,9 +53,10 @@ define (require, exports) ->
   render = (list) ->
     if Array.isArray list
       "<pre>#{list.map(render).join("")}</pre>"
-    else if (typeof list) is "string"
+    else if (typeof list) in ["string", "number"]
       "<code>#{escape list}</code>"
   exports.render = (list) ->
+    log "render:", list
     html = render list
     html[5...-6]
 

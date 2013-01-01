@@ -5,11 +5,14 @@
 
 ::-webkit-scrollbar-track
   width 4px
-  background hsl(0,90,95)
+  background hsl(240,80,80)
 
 ::-webkit-scrollbar-thumb
-  background hsl(0,50,80)
+  background hsl(185,50,80)
   border-radius 2px
+
+::-webkit-scrollbar-corner
+  background hsl(240,80,80)
 
 .cirru-editor-border
   background hsl(240, 80, 80)
@@ -46,15 +49,15 @@
       background hsla(0,0,90,0.2)
 
     .selection
-      background hsla(0,0,100,0.5)
+      background white
       display inline-block
-      min-width 2px
-      min-height 10px
+      min-width 4px
+      min-height 14px
 
       &:empty
-        margin 0px -1px
+        margin 0px -2px
   pre
-    box-shadow -1px 0px 0px hsla(0,0,80,0.4)
+    box-shadow -1px 0px 0px hsla(0,0,80,0.6)
     margin 6px 0px 4px 16px
 
     code
@@ -62,3 +65,10 @@
 
     &:hover
       box-shadow -2px 0px 0px hsla(0,0,90,0.6)
+
+    pre.fold
+      display inline-block
+      box-shadow 0px 1px 0px hsla(0,0,90,0.6)
+
+      &:hover
+        box-shadow 0px 2px 0px hsla(0,0,90,0.6)
