@@ -78,6 +78,7 @@ define(function(require, exports) {
     var all, code, pre, _fn, _fn1, _i, _j, _len, _len1;
     try {
       editor.innerHTML = utils.render(list);
+      Array.prototype.map.call(editor.childNodes, fold);
       all = editor.querySelectorAll("code");
       curr_tag = all[all.length - 1];
       input.value = curr_tag.textContent;

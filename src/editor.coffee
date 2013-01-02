@@ -64,6 +64,7 @@ define (require, exports) ->
   load = (elem, editor, list) ->
     try
       editor.innerHTML = utils.render list
+      Array.prototype.map.call editor.childNodes, fold
       # log editor.innerHTML
       all = editor.querySelectorAll("code")
       curr_tag = all[all.length-1]
