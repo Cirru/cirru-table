@@ -99,7 +99,8 @@ define (require, exports) ->
       pre.className = "fold"
       if pre.parentNode.className is "fold"
         pre.parentNode.className = ""
-      Array.prototype.map.call pre.childNodes, fold
+      if pre.childNodes.length < 5
+        Array.prototype.map.call pre.childNodes, fold
 
   exports.editor = (elem) ->
     editor = elem.querySelector ".cirru-editor"

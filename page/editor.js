@@ -121,7 +121,9 @@ define(function(require, exports) {
       if (pre.parentNode.className === "fold") {
         pre.parentNode.className = "";
       }
-      return Array.prototype.map.call(pre.childNodes, fold);
+      if (pre.childNodes.length < 5) {
+        return Array.prototype.map.call(pre.childNodes, fold);
+      }
     }
   };
   exports.editor = function(elem) {
