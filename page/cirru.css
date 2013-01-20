@@ -61,6 +61,9 @@
   margin: 6px 0px 4px 16px;
 }
 .cirru-editor pre code {
+  color: #dbdbdb;
+}
+.cirru-editor pre>code:first-child {
   color: #fff;
 }
 .cirru-editor pre:hover {
