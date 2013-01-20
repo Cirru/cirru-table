@@ -17,11 +17,7 @@ define(function(require, exports) {
   delay(2000, function() {
     var ret;
     ret = cirru.content();
-    log(ret);
-    return delay(2000, function() {
-      ret.push(ret.concat());
-      return cirru.content(ret);
-    });
+    return log(ret);
   });
   return exports;
 });

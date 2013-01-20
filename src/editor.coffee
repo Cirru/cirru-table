@@ -95,18 +95,25 @@ define (require, exports) ->
       editor.appendChild curr_tag
 
   fold = (pre) ->
+    # log pre
     if pre.tagName.toLowerCase() is "pre"
       pre.className = "fold"
       if pre.parentNode.className is "fold"
         pre.parentNode.className = ""
       if pre.childNodes.length < 5
         Array.prototype.map.call pre.childNodes, fold
+      else
+        pre.className = ''
 
   exports.editor = (elem) ->
     editor = elem.querySelector ".cirru-editor"
     elem.appendChild input
 
-    load elem, editor, JSON.parse(ls.list)
+    try
+      his = JSON.parse ls.list
+    catch err
+      his = {}
+    load elem, editor, his
 
     update = ->
       curr_tag.innerHTML = utils.input input

@@ -10,8 +10,8 @@ define (require, exports) ->
   delay 2000, ->
     ret = cirru.content()
     log ret
-    delay 2000, ->
-      ret.push ret.concat()
-      cirru.content ret
+    # delay 2000, ->
+    #   ret.push ret.concat()
+    #   cirru.content ret
 
   exports

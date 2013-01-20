@@ -45,7 +45,7 @@
   color: #ccc;
 }
 .cirru-editor code .space {
-  background: rgba(230,230,230,0.2);
+  background: rgba(230,230,230,0.4);
 }
 .cirru-editor code .selection {
   background: #fff;

@@ -123,14 +123,21 @@ define(function(require, exports) {
       }
       if (pre.childNodes.length < 5) {
         return Array.prototype.map.call(pre.childNodes, fold);
+      } else {
+        return pre.className = '';
       }
     }
   };
   exports.editor = function(elem) {
-    var editor, update;
+    var editor, his, update;
     editor = elem.querySelector(".cirru-editor");
     elem.appendChild(input);
-    load(elem, editor, JSON.parse(ls.list));
+    try {
+      his = JSON.parse(ls.list);
+    } catch (err) {
+      his = {};
+    }
+    load(elem, editor, his);
     update = function() {
       var height, left, start, top;
       curr_tag.innerHTML = utils.input(input);
