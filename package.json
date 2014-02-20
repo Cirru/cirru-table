@@ -1,0 +1,27 @@
+{
+  "name": "cirru-table",
+  "version": "0.0.1",
+  "description": "exprimental debugger of Cirru",
+  "main": "src/table.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/Cirru/cirru-table.git"
+  },
+  "keywords": [
+    "cirru",
+    "debugger"
+  ],
+  "author": "jiyinyiyong",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Cirru/cirru-table/issues"
+  },
+  "homepage": "https://github.com/Cirru/cirru-table",
+  "dependencies": {
+    "cirru-parser": "~0.7.1",
+    "cirru-writer": "0.0.4"
+  }
+}
