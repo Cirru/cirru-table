@@ -1,0 +1,12 @@
+
+@import url('table.css');
+
+body {
+    margin: 0px;
+}
+
+body, textarea {
+    font-family: Menlo;
+    font-size: 16px;
+    line-height: 2em;
+}

@@ -20,8 +20,13 @@
     "url": "https://github.com/Cirru/cirru-table/issues"
   },
   "homepage": "https://github.com/Cirru/cirru-table",
-  "dependencies": {
+  "dependencies": {},
+  "devDependencies": {
     "cirru-parser": "~0.7.1",
-    "cirru-writer": "0.0.4"
+    "cirru-writer": "0.0.4",
+    "cirru-html": "~0.1.4",
+    "shelljs": "~0.2.6",
+    "devtools-reloader-station": "0.0.3",
+    "vue": "~0.9.3"
   }
 }
