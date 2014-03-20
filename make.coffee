@@ -11,7 +11,7 @@ target.watch = ->
   fs.watch 'cirru/', interval: 200, (type, name) ->
     file = 'cirru/index.cirru'
     render = renderer (cat file), '@filename': file
-    render().to 'index.html'
+    render('@filename': file).to 'index.html'
     station.reload 'repo/cirru/table'
 
   exec 'coffee -o js/ -wbc coffee/', async: yes
