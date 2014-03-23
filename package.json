@@ -26,6 +26,7 @@
     "cirru-writer": "0.0.4",
     "cirru-html": "~0.1.4",
     "shelljs": "~0.2.6",
-    "devtools-reloader-station": "0.0.3"
+    "devtools-reloader-station": "0.0.3",
+    "vue": "~0.10.0-rc"
   }
 }

@@ -4,6 +4,4 @@ tool = require './util'
 
 {parseShort} = require 'cirru-parser'
 
-q('#editor').onkeydown = (event) ->
-  if event.keyCode is 13 and event.metaKey
-    console.log (parseShort @value)
+require('./table').bind()
