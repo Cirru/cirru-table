@@ -30,7 +30,6 @@ module.exports =
       ret = read track.params, scope, args.shift()
       track.args.push ret
       left -= ret
-    console.log 'minus', track.args.join(' ')
     track.ret = left
     record.push track
     left

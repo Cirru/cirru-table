@@ -56,8 +56,8 @@ registry =
     pattern = args[0]
     body = args[1..]
     body.unshift 'block'
-    child = scope.new()
     ret = (outerRecord, outerScope, outerArgs) ->
+      child = scope.new()
       track =
         name: ['[f]'].concat outerArgs
         args: ['[f]']
