@@ -1,8 +1,8 @@
 {
   "name": "cirru-table",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "exprimental debugger of Cirru",
-  "main": "src/table.js",
+  "main": "js/main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
