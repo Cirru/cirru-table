@@ -14,43 +14,93 @@ methods = {}
 
 registry =
   get: (record, scope, args) ->
-    read record, scope, args[0]
+    track =
+      name: 'get'
+      args: args
+      params: []
+      hidden: []
+    ret = read track.params, scope, args[0]
+    track.ret = ret
+    record.push track
+    ret
 
   set: (record, scope, args) ->
-    name = use record, scope, args[0]
-    value = read record, scope, args[1]
-    scope[name] = value
+    track =
+      name: 'set'
+      args: args
+      params: []
+      hidden: []
+    name = use track.params, scope, args[0]
+    value = read track.params, scope, args[1]
+    ret = scope[name] = value
+    track.ret = ret
+    record.push track
+    ret
 
   if: (record, scope, args) ->
-    cond = read record, scope, args[0]
+    track =
+      name: 'if'
+      args: args
+      params: []
+      hidden: []
+    cond = read track.params, scope, args[0]
     if cond
-      read record, scope, args[1]
+      ret = read track.params, scope, args[1]
     else if args[2]?
-      read record, scope, args[2]
+      ret = read record, scope, args[2]
+    track.ret = ret
+    record.push track
+    ret
 
   f: (record, scope, args) ->
+    track =
+      name: 'f'
+      args: args
+      params: []
+      hidden: []
     pattern = args[0]
     body = args[1..]
     body.unshift 'block'
     child =
       parent: scope
 
-    (outerRecord, outerScope, outerArgs) ->
+    ret = (outerRecord, outerScope, outerArgs) ->
       outerArgs.forEach (para, index) ->
         key = pattern[index]
-        child[key] = read outerArgs, outerScope, para
-      run outerRecord, child, body
+        child[key] = read track.params, outerScope, para
+      run track.hidden, child, body
+
+    track.ret = ret
+    record.push track
+
+    ret
 
   block: (record, scope, args) ->
+    track =
+      name: 'block'
+      args: args
+      params: []
+      hidden: []
     ret = undefined
     args.forEach (exp) ->
       ret = run record, scope, exp
+
+    track.ret = ret
+    record.push ret
+
     ret
 
   print: (record, scope, args) ->
+    track =
+      name: 'print'
+      args: args
+      params: []
+      hidden: []
     results = args.map (x) ->
-      read record, scope, x
+      read track.params, scope, x
     console.log results...
+
+    record.push track
     undefined
 
   '+': arithmetic['+']

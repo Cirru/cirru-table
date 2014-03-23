@@ -17,6 +17,7 @@ exports.bind = ->
             scope = {}
             programe = parseShort @code
             call record, scope, programe
+            console.log record
 
   vm.$watch 'code', (code) ->
     localStorage.setItem 'code-in-table', code

@@ -3,7 +3,6 @@ evaluate = require './evaluate'
 {generate} = require 'cirru-writer'
 
 run = (record, scope, exp) ->
-  record.push 'run: ' + (generate [[exp]])
   func = exp[0]
   args = exp[1..]
   if typeof func is 'string'
