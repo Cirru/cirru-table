@@ -2,22 +2,43 @@
 Vue = require 'vue'
 {call} = require './evaluate'
 {parseShort} = require 'cirru-parser'
-exports.bind = ->
+{generate} = require 'cirru-writer'
 
-  vm = new Vue
-    el: '#app'
-    data:
-      code: localStorage.getItem('code-in-table')
-    methods:
-      handleKey: (event) ->
-        if event.keyCode is 13
-          if event.metaKey
-            event.preventDefault()
-            record = []
-            scope = {}
-            programe = parseShort @code
-            call record, scope, programe
-            console.log record
+Vue.component 'expression',
+  template: '#expression'
+  data:
+    extracted: yes
 
-  vm.$watch 'code', (code) ->
-    localStorage.setItem 'code-in-table', code
+vm = new Vue
+  el: '#app'
+  data:
+    code: localStorage.getItem('code-in-table')
+    record: []
+  methods:
+    handleKey: (event) ->
+      if event.keyCode is 13
+        if event.metaKey
+          event.preventDefault()
+          @record = []
+          scope = {}
+          programe = parseShort @code
+          call @record, scope, programe
+          console.log @record
+    shortenRet: (ret) ->
+      if typeof ret is 'function'
+        '[Function]'
+      else
+        ret
+    pretty: (code) ->
+      if code?
+        generate [[code]]
+      else
+        '--'
+    joinItems: (list) ->
+      list?.map (x) ->
+        if typeof x is 'function' then '[f]'
+        else String x
+      .join ' '
+
+vm.$watch 'code', (code) ->
+  localStorage.setItem 'code-in-table', code

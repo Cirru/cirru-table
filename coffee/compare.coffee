@@ -4,80 +4,44 @@
 module.exports =
  '>': (record, scope, args) ->
     track =
-      name: '>'
-      args: args
+      name: ['>'].concat args
+      args: ['>']
       params: []
       hidden: []
     result = no
     end = no
     former = read record, scope, args.shift()
+    track.args.push former
     do compare = ->
       if args.length > 0 and (not end)
         ret = read record, scope, args.shift()
+        track.args.push ret
         if ret >= former
           end = yes
           result = no
         else
+          result = yes
           compare()
     track.ret = result
     record.push track
+    console.log 'result:', result
     result
   
   '<': (record, scope, args) ->
     track =
-      name: '<'
-      args: args
+      name: ['<'].concat args
+      args: ['<']
       params: []
       hidden: []
     result = no
     end = no
     former = read track.params, scope, args.shift()
+    track.args.push former
     do compare = ->
       if args.length > 0 and (not end)
         ret = read track.params, scope, args.shift()
+        track.args.push ret
         if ret <= former
-          end = yes
-          result = no
-        else
-          compare()
-    track.ret = result
-    record.push track
-    result
-
-  '>=': (record, scope, args) ->
-    track =
-      name: '>='
-      args: args
-      params: []
-      hidden: []
-    result = no
-    end = no
-    former = read track.params, scope, args.shift()
-    do compare = ->
-      if args.length > 0 and (not end)
-        ret = read track.params, scope, args.shift()
-        if ret > former
-          end = yes
-          result = no
-        else
-          compare()
-    track.ret = result
-    record.push track
-    result
-
-  '<=': (record, scope, args) ->
-    track =
-      name: '<='
-      args: args
-      params: []
-      hidden: []
-    result = no
-    end = no
-    former = read track.params, scope, args.shift()
-    do compare = ->
-      if args.length > 0 and (not end)
-        ret = read track.params, scope, args.shift()
-        if ret < former
           end = yes
           result = no
         else
@@ -88,16 +52,18 @@ module.exports =
 
   '=': (record, scope, args) ->
     track =
-      name: '='
-      args: args
+      name: ['='].concat args
+      args: ['=']
       params: []
       hidden: []
     result = no
     end = no
     first = read track.params, scope, args.shift()
+    track.args.push first
     do compare = ->
       if args.length > 0 and (not end)
         ret = read track.params, scope, args.length()
+        track.args.push ret
         if ret is first
           result = yes
           compare()

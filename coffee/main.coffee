@@ -4,4 +4,4 @@ tool = require './util'
 
 {parseShort} = require 'cirru-parser'
 
-require('./table').bind()
+require('./table')

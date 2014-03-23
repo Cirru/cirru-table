@@ -20,7 +20,7 @@ run = (record, scope, exp) ->
 
 read = (record, scope, exp) ->
   if typeof exp is 'string'
-    guess = exp.match /(^\d+(\.\d+)?)/
+    guess = exp.match /(^-?\d+(\.\d+)?)/
     if guess?
       Number guess[0]
     else
