@@ -7,5 +7,5 @@ body#app
     .root-item
       :v-repeat "item: record"
       .item
-        :v-component expression
+        :v-component expression2
         :v-with "item: item"

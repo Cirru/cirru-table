@@ -3,36 +3,23 @@ evaluate = require './evaluate'
 {generate} = require 'cirru-writer'
 
 run = (record, scope, exp) ->
-  func = exp[0]
+  name = exp[0]
   args = exp[1..]
-  if typeof func is 'string'
-    if evaluate.registry[func]?
-      ret = evaluate.registry[func] record, scope, args
-    else if scope[func]?
-      ret = scope[func] record, scope, args
-  else
-    solution = read record, scope, func
-    if typeof solution is 'function'
-      ret = solution record, scope, args
-    else
-      throw new Error
-  ret
+  if evaluate.registry[name]? then func = evaluate.registry[name]
+  else func = scope.get name
+  unless func? then throw new Error "not func: #{name}"
+  func record, scope, args
 
 read = (record, scope, exp) ->
   if typeof exp is 'string'
     guess = exp.match /(^-?\d+(\.\d+)?)/
-    if guess?
-      Number guess[0]
-    else
-      scope[exp]
-  else
-    run record, scope, exp
+    if guess? then Number guess[0]
+    else scope.get exp
+  else run record, scope, exp
 
 use = (record, scope, exp) ->
-  if typeof exp is 'string'
-    exp
-  else
-    run record, scope, exp
+  if typeof exp is 'string' then exp
+  else run record, scope, exp
 
 exports.read = read
 exports.run = run

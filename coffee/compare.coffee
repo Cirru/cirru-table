@@ -20,11 +20,11 @@ module.exports =
           end = yes
           result = no
         else
+          former = ret
           result = yes
           compare()
     track.ret = result
     record.push track
-    console.log 'result:', result
     result
   
   '<': (record, scope, args) ->
@@ -45,6 +45,7 @@ module.exports =
           end = yes
           result = no
         else
+          former = ret
           compare()
     track.ret = result
     record.push track

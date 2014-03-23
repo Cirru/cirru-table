@@ -6,11 +6,8 @@ compare = require './compare'
 bool = require './bool'
 
 exports.call = (record, scope, code) ->
-  
   code.unshift 'block'
   run record, scope, code
-
-methods = {}
 
 registry =
   get: (record, scope, args) ->
@@ -34,10 +31,10 @@ registry =
     name = use track.params, scope, args[0]
     value = read track.params, scope, args[1]
     track.args.push name, value
-    ret = scope[name] = value
-    track.ret = ret
+    scope.set name, value
+    track.ret = value
     record.push track
-    ret
+    value
 
   if: (record, scope, args) ->
     track =
@@ -59,9 +56,7 @@ registry =
     pattern = args[0]
     body = args[1..]
     body.unshift 'block'
-    child =
-      __proto__: scope
-
+    child = scope.new()
     ret = (outerRecord, outerScope, outerArgs) ->
       track =
         name: ['[f]'].concat outerArgs
@@ -70,8 +65,9 @@ registry =
         hidden: []
       outerArgs.forEach (para, index) ->
         key = pattern[index]
-        child[key] = read track.params, outerScope, para
-        track.args.push child[key]
+        value = read track.params, outerScope, para
+        child.set key, value
+        track.args.push value
       result = run track.hidden, child, body
       track.ret = result
       outerRecord.push track
@@ -80,19 +76,9 @@ registry =
     ret
 
   block: (record, scope, args) ->
-    track =
-      name: ['block'].concat args
-      args: ['block']
-      params: []
-      hidden: []
     ret = undefined
     args.forEach (exp) ->
-      ret = run track.params, scope, exp
-      track.args.push ret
-
-    track.ret = ret
-    record.push track
-
+      ret = run record, scope, exp
     ret
 
   print: (record, scope, args) ->

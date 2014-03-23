@@ -9,12 +9,10 @@ module.exports =
       params: []
       hidden: []
     sum = 0
-    do add = ->
-      if args.length > 0
-        ret = read track.params, scope, args.shift()
-        track.args.push ret
-        sum += ret
-        add()
+    while args.length > 0
+      ret = read track.params, scope, args.shift()
+      track.args.push ret
+      sum += ret
     track.ret = sum
     record.push track
     sum
@@ -27,14 +25,12 @@ module.exports =
       hidden: []
 
     left = read track.params, scope, args.shift()
-    console.log 'got left', left
     track.args.push left
-    do sub = ->
-      if args.length > 0
-        ret = read track.params, scope, args.shift()
-        track.args.push ret
-        left -= ret
-        sub()
+    while args.length > 0
+      ret = read track.params, scope, args.shift()
+      track.args.push ret
+      left -= ret
+    console.log 'minus', track.args.join(' ')
     track.ret = left
     record.push track
     left
@@ -47,12 +43,10 @@ module.exports =
       hidden: []
     product = read track.params, scope, args.shift()
     track.args.push product
-    do mutiply = ->
-      if args.length > 0
-        ret = read track.params, scope, args.shift()
-        track.args.push ret
-        product *= ret
-        mutiply()
+    while args.length > 0
+      ret = read track.params, scope, args.shift()
+      track.args.push ret
+      product *= ret
     track.ret = product
     record.push track
     product
@@ -65,12 +59,10 @@ module.exports =
       hidden: []
     division = read track.params, scope, args.shift()
     track.args.push division
-    do divide = ->
-      if args.length > 0
-        ret = read track.params, scope, args.shift()
-        track.args.push ret
-        division /= ret
-        divide()
+    while args.length > 0
+      ret = read track.params, scope, args.shift()
+      track.args.push ret
+      division /= ret
 
     track.ret = division
     record.push track

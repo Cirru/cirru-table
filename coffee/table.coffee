@@ -4,6 +4,8 @@ Vue = require 'vue'
 {parseShort} = require 'cirru-parser'
 {generate} = require 'cirru-writer'
 
+{Scope} = require './scope'
+
 Vue.component 'expression',
   template: '#expression'
   data:
@@ -20,10 +22,9 @@ vm = new Vue
         if event.metaKey
           event.preventDefault()
           @record = []
-          scope = {}
+          scope = new Scope
           programe = parseShort @code
           call @record, scope, programe
-          console.log @record
     shortenRet: (ret) ->
       if typeof ret is 'function'
         '[Function]'
