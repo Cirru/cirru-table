@@ -1,20 +1,23 @@
 
 evaluate = require './evaluate'
+{generate} = require 'cirru-writer'
 
 run = (record, scope, exp) ->
+  record.push 'run: ' + (generate [[exp]])
   func = exp[0]
   args = exp[1..]
   if typeof func is 'string'
     if evaluate.registry[func]?
-      evaluate.registry[func] record, scope, args
+      ret = evaluate.registry[func] record, scope, args
     else if scope[func]?
-      scope[func] record, scope, args
+      ret = scope[func] record, scope, args
   else
     solution = read record, scope, func
     if typeof solution is 'function'
-      solution record, scope, args
+      ret = solution record, scope, args
     else
       throw new Error
+  ret
 
 read = (record, scope, exp) ->
   if typeof exp is 'string'

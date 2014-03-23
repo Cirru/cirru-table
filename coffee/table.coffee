@@ -2,21 +2,21 @@
 Vue = require 'vue'
 {call} = require './evaluate'
 {parseShort} = require 'cirru-parser'
-
 exports.bind = ->
 
   vm = new Vue
     el: '#app'
     data:
-      code: 'set a 1'
+      code: localStorage.getItem('code-in-table')
     methods:
       handleKey: (event) ->
         if event.keyCode is 13
           if event.metaKey
             event.preventDefault()
-            console.log 'evaluate'
             record = []
             scope = {}
             programe = parseShort @code
             call record, scope, programe
-            console.log record, scope
+
+  vm.$watch 'code', (code) ->
+    localStorage.setItem 'code-in-table', code

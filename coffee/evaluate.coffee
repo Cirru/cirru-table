@@ -24,9 +24,9 @@ registry =
   if: (record, scope, args) ->
     cond = read record, scope, args[0]
     if cond
-      run record, scope, args[1]
+      read record, scope, args[1]
     else if args[2]?
-      run record, scope, args[2]
+      read record, scope, args[2]
 
   f: (record, scope, args) ->
     pattern = args[0]
@@ -48,7 +48,10 @@ registry =
     ret
 
   print: (record, scope, args) ->
-
+    results = args.map (x) ->
+      read record, scope, x
+    console.log results...
+    undefined
 
   '+': arithmetic['+']
   '-': arithmetic['-']
